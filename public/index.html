@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home Page - Mostrar Usuarios</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+    margin: 0;
+    padding: 40px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  table {
+    margin: 40px auto;
+    border-collapse: collapse;
+    width: 90%;
+    max-width: 700px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  }
+  th, td {
+    padding: 12px 20px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background-color: #4a90e2;
+    color: white;
+  }
+  tbody tr:hover {
+    background-color: #f1f7ff;
+  }
+  #errorMsg {
+    max-width: 700px;
+    margin: 20px auto;
+    background-color: #ffdddd;
+    border: 1px solid #dd5555;
+    padding: 10px 15px;
+    color: #a70000;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+  }
+</style>
+</head>
+<body>
+  <h1>Lista de Usuarios</h1>
+  <div id="errorMsg"></div>
+  <table aria-label="Tabla con usuarios" role="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="usersTableBody">
+      <!-- Usuarios cargados aquí -->
+    </tbody>
+  </table>
+
+  <script>
+  async function fetchUsers() {
+    const errorMsg = document.getElementById('errorMsg');
+    try {
+      const response = await fetch('/api/users');
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor: ' + response.status);
+      }
+      const users = await response.json();
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = '';
+      if (users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay usuarios en la tabla.</td></tr>';
+        return;
+      }
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      errorMsg.style.display = 'none';
+    } catch (error) {
+      errorMsg.textContent = 'No se pudo cargar la lista de usuarios. Error: ' + error.message;
+      errorMsg.style.display = 'block';
+    }
+  }
+  fetchUsers();
+  </script>
+</body>
+</html>
+

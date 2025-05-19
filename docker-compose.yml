@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  apache:
+    image: httpd
+    container_name: miapache
+    ports:
+      - "8080:80"
+    networks:
+      - red-apache-mysql
+
+  mysql:
+    image: mysql
+    container_name: mimysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    networks:
+      - red-apache-mysql
+
+networks:
+  red-apache-mysql:
+    driver: bridge
